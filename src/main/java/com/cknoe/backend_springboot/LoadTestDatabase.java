@@ -9,9 +9,9 @@ import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Profile("test")
-public class LoadDatabase {
+public class LoadTestDatabase {
 
-    private static final Logger log = LoggerFactory.getLogger(LoadDatabase.class);
+    private static final Logger log = LoggerFactory.getLogger(LoadTestDatabase.class);
 
     @Bean
     CommandLineRunner initDatabase(CardRepository repository) {
