@@ -1,7 +1,7 @@
-package com.cknoe.backend_springboot;
+package com.cknoe.backend_springboot.exception;
 
 public class CardNotFoundException extends RuntimeException {
-    CardNotFoundException(Long id) {
+    public CardNotFoundException(Long id) {
         super("Could not find card " + id);
     }
 }

@@ -1,4 +1,4 @@
-package com.cknoe.backend_springboot;
+package com.cknoe.backend_springboot.entity;
 
 import java.util.Objects;
 

@@ -1,4 +1,4 @@
-package com.cknoe.backend_springboot;
+package com.cknoe.backend_springboot.Controller;
 
 import java.util.List;
 
@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.cknoe.backend_springboot.entity.Card;
+import com.cknoe.backend_springboot.exception.CardNotFoundException;
+import com.cknoe.backend_springboot.repository.CardRepository;
 
 @RestController
 public class CardController {

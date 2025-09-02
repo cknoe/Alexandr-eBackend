@@ -7,6 +7,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import com.cknoe.backend_springboot.entity.Card;
+import com.cknoe.backend_springboot.repository.CardRepository;
+
 @Configuration
 @Profile("test")
 public class LoadTestDatabase {
