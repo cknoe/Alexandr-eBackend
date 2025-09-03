@@ -1,0 +1,4 @@
+ALTER TABLE card ADD COLUMN user_id BIGINT NOT NULL DEFAULT 1;
+
+ALTER TABLE card
+ADD CONSTRAINT fk_card_user FOREIGN KEY (user_id) REFERENCES app_user (id);

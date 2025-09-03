@@ -7,6 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.SequenceGenerator;
 
 @Entity
@@ -24,6 +26,10 @@ public class Card {
 
     @Column(nullable = true)
     private String content;
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
+    private AppUser owner;
 
     public Card() {
     }
@@ -51,6 +57,10 @@ public class Card {
         return title;
     }
 
+    public AppUser getOwner() {
+        return owner;
+    }
+
     public void setTitle(String title) {
         this.title = title;
     }
@@ -71,6 +81,10 @@ public class Card {
         this.content = content;
     }
 
+    public void setOwner(AppUser owner) {
+        this.owner = owner;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
@@ -85,4 +99,5 @@ public class Card {
     public int hashCode() {
         return Objects.hash(this.id, this.title, this.description);
     }
+
 }

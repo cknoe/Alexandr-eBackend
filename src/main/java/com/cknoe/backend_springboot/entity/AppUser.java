@@ -1,11 +1,16 @@
 package com.cknoe.backend_springboot.entity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.SequenceGenerator;
+import jakarta.persistence.CascadeType;
 
 @Entity
 public class AppUser {
@@ -22,6 +27,9 @@ public class AppUser {
 
     @Column(nullable = false)
     private String role;
+
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Card> cards = new ArrayList<>();
 
     public AppUser() {
     }
@@ -48,6 +56,10 @@ public class AppUser {
         return role;
     }
 
+    public List<Card> getCards() {
+        return cards;
+    }
+
     public void setId(Long id) {
         this.id = id;
     }
@@ -62,6 +74,10 @@ public class AppUser {
 
     public void setRole(String role) {
         this.role = role;
+    }
+
+    public void setCards(List<Card> cards) {
+        this.cards = cards;
     }
 
 }

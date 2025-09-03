@@ -2,6 +2,9 @@ package com.cknoe.backend_springboot.controller;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,52 +13,70 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.entity.Card;
 import com.cknoe.backend_springboot.exception.CardNotFoundException;
 import com.cknoe.backend_springboot.repository.CardRepository;
+import com.cknoe.backend_springboot.repository.AppUserRepository;
 
 @RestController
 public class CardController {
 
-    private final CardRepository repository;
+    private final CardRepository cardRepository;
+    private final AppUserRepository appUserRepository;
 
-    public CardController(CardRepository repository) {
-        this.repository = repository;
+    public CardController(CardRepository cardRepository, AppUserRepository appUserRepository) {
+        this.cardRepository = cardRepository;
+        this.appUserRepository = appUserRepository;
+    }
+
+    @GetMapping("/admincards")
+    List<Card> all() {
+        return cardRepository.findAll();
     }
 
     @GetMapping("/cards")
-    List<Card> all() {
-        return repository.findAll();
+    List<Card> myCards(@AuthenticationPrincipal UserDetails userDetails) {
+        String username = userDetails.getUsername();
+        return cardRepository.findByOwnerUsername(username);
+    }
+
+    @PostMapping("/admincards")
+    Card newCard(@RequestBody Card newCard) {
+        return cardRepository.save(newCard);
     }
 
     @PostMapping("/cards")
-    Card newCard(@RequestBody Card newCard) {
-        return repository.save(newCard);
+    public ResponseEntity<Card> createCard(@RequestBody Card card, @AuthenticationPrincipal UserDetails userDetails) {
+        AppUser user = appUserRepository.findByUsername(userDetails.getUsername())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        card.setOwner(user);
+        return ResponseEntity.ok(cardRepository.save(card));
     }
 
     @GetMapping("/cards/{id}")
     Card one(@PathVariable Long id) {
-        return repository.findById(id).orElseThrow(() -> new CardNotFoundException(id));
+        return cardRepository.findById(id).orElseThrow(() -> new CardNotFoundException(id));
     }
 
     @PutMapping("/cards/{id}")
     Card replaceCard(@RequestBody Card newCard, @PathVariable Long id) {
-        return repository.findById(id)
+        return cardRepository.findById(id)
                 .map(card -> {
                     card.setTitle(newCard.getTitle());
                     card.setDescription(newCard.getDescription());
                     card.setContent(newCard.getContent());
-                    return repository.save(card);
+                    return cardRepository.save(card);
                 })
                 .orElseGet(() -> {
                     newCard.setId(id);
-                    return repository.save(newCard);
+                    return cardRepository.save(newCard);
                 });
     }
 
     @DeleteMapping("/cards/{id}")
     void deleteCard(@PathVariable Long id) {
-        repository.deleteById(id);
+        cardRepository.deleteById(id);
     }
 
 }

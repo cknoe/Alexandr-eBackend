@@ -1,6 +1,6 @@
 package com.cknoe.backend_springboot.service;
 
-import com.cknoe.backend_springboot.repository.UserRepository;
+import com.cknoe.backend_springboot.repository.AppUserRepository;
 import com.cknoe.backend_springboot.entity.AppUser;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 public class AppUserDetailsService implements UserDetailsService {
 
-    private final UserRepository repository;
+    private final AppUserRepository repository;
 
-    public AppUserDetailsService(UserRepository repository) {
+    public AppUserDetailsService(AppUserRepository repository) {
         this.repository = repository;
     }
 
