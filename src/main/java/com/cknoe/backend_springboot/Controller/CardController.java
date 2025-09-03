@@ -1,4 +1,4 @@
-package com.cknoe.backend_springboot.Controller;
+package com.cknoe.backend_springboot.controller;
 
 import java.util.List;
 

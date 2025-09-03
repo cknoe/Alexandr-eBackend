@@ -2,6 +2,7 @@ package com.cknoe.backend_springboot.entity;
 
 import java.util.Objects;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -15,8 +16,13 @@ public class Card {
     @SequenceGenerator(name = "card_id_gen", sequenceName = "card_id_seq", allocationSize = 1)
     private Long id;
 
+    @Column(nullable = false)
     private String title;
+
+    @Column(nullable = false)
     private String description;
+
+    @Column(nullable = true)
     private String content;
 
     public Card() {
