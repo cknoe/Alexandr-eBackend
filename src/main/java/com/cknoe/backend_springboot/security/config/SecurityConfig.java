@@ -1,4 +1,4 @@
-package com.cknoe.backend_springboot.jwt;
+package com.cknoe.backend_springboot.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import com.cknoe.backend_springboot.service.AppUserDetailsService;
+import com.cknoe.backend_springboot.security.jwt.JwtRequestFilter;
 
 @EnableWebSecurity
 @Configuration

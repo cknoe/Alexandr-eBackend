@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cknoe.backend_springboot.jwt.JwtUtil;
+import com.cknoe.backend_springboot.security.jwt.JwtUtil;
 import com.cknoe.backend_springboot.service.AppUserDetailsService;
 
 @RestController

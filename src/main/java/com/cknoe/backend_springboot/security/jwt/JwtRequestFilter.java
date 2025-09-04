@@ -1,4 +1,4 @@
-package com.cknoe.backend_springboot.jwt;
+package com.cknoe.backend_springboot.security.jwt;
 
 import java.io.IOException;
 
