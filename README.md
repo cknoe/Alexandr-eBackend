@@ -6,4 +6,4 @@ docker-compose up -d
 
 #Connection
 curl -v -X POST http://localhost:8080/login -H "Content-Type: application/json" -d '{"username":"testuser","password":"password"}' | jq
-curl -v http://localhost:8080/cards -H "Authorization: Bearer TOKEN | jq
+curl -v http://localhost:8080/cards -H "Authorization: Bearer TOKEN"| jq

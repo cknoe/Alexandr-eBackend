@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.cknoe.backend_springboot.dto.CardDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.entity.Card;
 import com.cknoe.backend_springboot.exception.CardNotFoundException;
@@ -31,14 +32,14 @@ public class CardController {
     }
 
     @GetMapping("/admincards")
-    List<Card> all() {
-        return cardRepository.findAll();
+    List<CardDTO> all() {
+        return cardRepository.findAll().stream().map(CardDTO::fromEntity).toList();
     }
 
     @GetMapping("/cards")
-    List<Card> myCards(@AuthenticationPrincipal UserDetails userDetails) {
+    List<CardDTO> myCards(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
-        return cardRepository.findByOwnerUsername(username);
+        return cardRepository.findByOwnerUsername(username).stream().map(CardDTO::fromEntity).toList();
     }
 
     @PostMapping("/admincards")
@@ -55,8 +56,9 @@ public class CardController {
     }
 
     @GetMapping("/cards/{id}")
-    Card one(@PathVariable Long id) {
-        return cardRepository.findById(id).orElseThrow(() -> new CardNotFoundException(id));
+    CardDTO one(@PathVariable Long id) {
+        Card card = cardRepository.findById(id).orElseThrow(() -> new CardNotFoundException(id));
+        return CardDTO.fromEntity(card);
     }
 
     @PutMapping("/cards/{id}")
