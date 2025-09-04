@@ -1,3 +1,7 @@
+app:
+    jwt-secret: bXlzZWNyZXRrZXlteXNlY3JldGtleW15c2VjcmV0a2V5IQ==
+    jwt-expiration-ms: 36000000 # 10 heures
+    frontend-url: http://localhost:5173/
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/mydb

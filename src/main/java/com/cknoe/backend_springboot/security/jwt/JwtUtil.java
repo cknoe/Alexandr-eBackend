@@ -9,22 +9,30 @@ import io.jsonwebtoken.security.Keys;
 
 import java.security.Key;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET_KEY = "bXlzZWNyZXRrZXlteXNlY3JldGtleW15c2VjcmV0a2V5IQ=="; // à stocker dans
-                                                                                          // application.yml / vault
-    byte[] decodedKey = Base64.getDecoder().decode(SECRET_KEY);
-    Key key = Keys.hmacShaKeyFor(decodedKey);
+    private final Key key;
+    private final int jwtExpirationMs;
+
+    public JwtUtil(
+            @Value("${app.jwt-secret}") String secretKey,
+            @Value("${app.jwt-expiration-ms}") int jwtExpirationMs) {
+
+        byte[] decodedKey = Base64.getDecoder().decode(secretKey);
+        this.key = Keys.hmacShaKeyFor(decodedKey);
+        this.jwtExpirationMs = jwtExpirationMs;
+    }
 
     public String generateToken(UserDetails userDetails) {
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // 10h
+                .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationMs))
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
     }
