@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.validation.Valid;
+
 import com.cknoe.backend_springboot.dto.CardDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.entity.Card;
@@ -39,10 +41,11 @@ public class CardController {
     }
 
     @PostMapping("/cards")
-    public ResponseEntity<CardDTO> createCard(@RequestBody Card card,
+    public ResponseEntity<CardDTO> createCard(@Valid @RequestBody CardDTO cardDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
         AppUser user = appUserRepository.findByUsername(userDetails.getUsername())
                 .orElseThrow(() -> new RuntimeException("User not found"));
+        Card card = CardDTO.toEntity(cardDTO);
         card.setOwner(user);
         return ResponseEntity.ok(CardDTO.fromEntity(cardRepository.save(card)));
     }
@@ -57,8 +60,9 @@ public class CardController {
     }
 
     @PutMapping("/cards/{id}")
-    CardDTO replaceMyCard(@RequestBody Card newCard, @PathVariable Long id,
+    CardDTO replaceMyCard(@Valid @RequestBody CardDTO newCardDTO, @PathVariable Long id,
             @AuthenticationPrincipal UserDetails userDetails) {
+        Card newCard = CardDTO.toEntity(newCardDTO);
         Card updatedCard = cardRepository.findById(id)
                 .map(card -> {
                     if (!card.getOwner().getUsername().equals(userDetails.getUsername())) {
