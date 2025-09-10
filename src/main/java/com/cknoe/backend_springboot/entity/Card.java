@@ -45,6 +45,19 @@ public class Card {
         this.content = content;
     }
 
+    public Card(String title, String description, AppUser owner) {
+        this.title = title;
+        this.description = description;
+        this.owner = owner;
+    }
+
+    public Card(String title, String description, String content, AppUser owner) {
+        this.title = title;
+        this.description = description;
+        this.content = content;
+        this.owner = owner;
+    }
+
     public Long getId() {
         return id;
     }
