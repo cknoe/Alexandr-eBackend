@@ -37,7 +37,8 @@ public class CardController {
     @GetMapping("/cards")
     List<CardDTO> getMyCards(@AuthenticationPrincipal UserDetails userDetails) {
         String username = userDetails.getUsername();
-        return cardRepository.findByOwnerUsername(username).stream().map(CardDTO::fromEntity).toList();
+        return cardRepository.findByOwnerUsernameOrderByCreationDateAsc(username).stream().map(CardDTO::fromEntity)
+                .toList();
     }
 
     @PostMapping("/cards")
