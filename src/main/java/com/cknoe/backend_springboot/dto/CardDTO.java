@@ -10,6 +10,7 @@ public record CardDTO(
         String description,
         @URL(message = "Content must be a valid URL") String content,
         String ownerUsername) {
+
     public static CardDTO fromEntity(Card card) {
         return new CardDTO(
                 card.getId(),
@@ -21,7 +22,6 @@ public record CardDTO(
 
     public static Card toEntity(CardDTO cardDTO) {
         Card card = new Card();
-        card.setId(cardDTO.id());
         card.setTitle(cardDTO.title());
         card.setDescription(cardDTO.description());
         card.setContent(cardDTO.content());
