@@ -18,15 +18,19 @@ import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.exception.UserNotFoundException;
 import com.cknoe.backend_springboot.repository.AppUserRepository;
 import com.cknoe.backend_springboot.security.jwt.JwtUtil;
+import com.cknoe.backend_springboot.service.AppUserDetailsService;
 
 @RestController
 public class AppUserController {
 
     private final AppUserRepository appUserRepository;
+    private final AppUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
 
-    public AppUserController(AppUserRepository appUserRepository, JwtUtil jwtUtil) {
+    public AppUserController(AppUserRepository appUserRepository, JwtUtil jwtUtil,
+            AppUserDetailsService userDetailsService) {
         this.appUserRepository = appUserRepository;
+        this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
     }
 
@@ -55,7 +59,7 @@ public class AppUserController {
                 })
                 .orElseThrow(() -> new UserNotFoundException(userDetails.getUsername()));
         ;
-        String newJwt = jwtUtil.generateToken(updatedUser.getUsername());
+        String newJwt = jwtUtil.generateToken(userDetailsService.loadUserByUsername(updatedUser.getUsername()));
         UserDTO userDTO = UserDTO.fromEntity(updatedUser);
         return new UserChangeDTO(userDTO, newJwt);
     }

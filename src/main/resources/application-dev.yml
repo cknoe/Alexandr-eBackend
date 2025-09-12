@@ -1,6 +1,8 @@
 app:
     jwt-secret: bXlzZWNyZXRrZXlteXNlY3JldGtleW15c2VjcmV0a2V5IQ==
     jwt-expiration-ms: 36000000 # 10 heures
+    jwt-refresh-secret: bXlyZWZyZXNoc2VjcmV0a2V5bXlyZWZyZXNoc2VjcmV0a2V5IQ==
+    jwt-refresh-expiration-ms: 604800000 # 7 jours
     frontend-url: http://localhost:5173/
 spring:
   datasource:
