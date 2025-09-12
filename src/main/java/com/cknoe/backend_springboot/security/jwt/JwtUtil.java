@@ -34,7 +34,7 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(decodedKey);
         this.jwtExpirationMs = jwtExpirationMs;
         this.refreshKey = Keys.hmacShaKeyFor(decodedRefreshKey);
-        this.jwtRefreshExpirationMs = jwtExpirationMs;
+        this.jwtRefreshExpirationMs = jwtRefreshExpirationMs;
     }
 
     public String generateToken(UserDetails userDetails) {
