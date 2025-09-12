@@ -81,7 +81,7 @@ public class AuthController {
         return ResponseEntity.ok(new AuthResponse(jwt, null));
     }
 
-    @PostMapping("refresh-token")
+    @PostMapping("/refresh-token")
     public ResponseEntity<AuthResponse> refreshToken(@CookieValue("refreshToken") String refreshToken,
             HttpServletResponse response) {
         if (!jwtUtil.validateRefreshToken(refreshToken)) {
@@ -100,9 +100,9 @@ public class AuthController {
     ResponseCookie getResponseCookie(String token) {
         return ResponseCookie.from("refreshToken", token)
                 .httpOnly(true)
-                // .secure(true)
-                .sameSite("Strict")
-                // .path("/api/auth/refresh")
+                .secure(false)
+                .sameSite("None")
+                .path("/")
                 .maxAge(7 * 24 * 60 * 60)
                 .build();
     }
