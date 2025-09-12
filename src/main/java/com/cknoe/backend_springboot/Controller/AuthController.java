@@ -1,6 +1,8 @@
 package com.cknoe.backend_springboot.controller;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,6 +19,8 @@ import com.cknoe.backend_springboot.repository.AppUserRepository;
 import com.cknoe.backend_springboot.security.config.SecurityConfig;
 import com.cknoe.backend_springboot.security.jwt.JwtUtil;
 import com.cknoe.backend_springboot.service.AppUserDetailsService;
+
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 public class AuthController {
@@ -40,7 +44,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request) {
+    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request, HttpServletResponse response) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.username(), request.password()));
 
@@ -49,14 +53,16 @@ public class AuthController {
         String jwt = jwtUtil.generateToken(userDetails);
         String jwtRefresh = jwtUtil.generateRefreshToken(userDetails);
 
-        return ResponseEntity.ok(new AuthResponse(jwt, jwtRefresh, null));
+        response.addHeader(HttpHeaders.SET_COOKIE, getResponseCookie(jwtRefresh).toString());
+        return ResponseEntity.ok(new AuthResponse(jwt, null));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequestDTO request) {
+    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequestDTO request,
+            HttpServletResponse response) {
 
         if (appUserRepository.findByUsername(request.username()).isPresent()) {
-            return ResponseEntity.badRequest().body(new AuthResponse(null, null, "Username already exists"));
+            return ResponseEntity.badRequest().body(new AuthResponse(null, "Username already exists"));
         }
 
         AppUser user = new AppUser();
@@ -70,29 +76,42 @@ public class AuthController {
 
         String jwt = jwtUtil.generateToken(userDetails);
         String jwtRefresh = jwtUtil.generateRefreshToken(userDetails);
-        return ResponseEntity.ok(new AuthResponse(jwt, jwtRefresh, null));
+
+        response.addHeader(HttpHeaders.SET_COOKIE, getResponseCookie(jwtRefresh).toString());
+        return ResponseEntity.ok(new AuthResponse(jwt, null));
     }
 
     @PostMapping("refresh-token")
-    public ResponseEntity<AuthResponse> refreshToken(@CookieValue("refreshToken") String refreshToken) {
+    public ResponseEntity<AuthResponse> refreshToken(@CookieValue("refreshToken") String refreshToken,
+            HttpServletResponse response) {
         if (!jwtUtil.validateRefreshToken(refreshToken)) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse(null, null, "Invalid refresh token"));
+                    .body(new AuthResponse(null, "Invalid refresh token"));
         }
 
         UserDetails userDetails = userDetailsService
                 .loadUserByUsername(jwtUtil.extractUsernameFromRefresh(refreshToken));
 
         String newToken = jwtUtil.generateToken(userDetails);
-        String newRefreshToken = jwtUtil.generateRefreshToken(userDetails);
-        return ResponseEntity.ok(new AuthResponse(newToken, newRefreshToken, null));
+
+        return ResponseEntity.ok(new AuthResponse(newToken, null));
+    }
+
+    ResponseCookie getResponseCookie(String token) {
+        return ResponseCookie.from("refreshToken", token)
+                .httpOnly(true)
+                // .secure(true)
+                .sameSite("Strict")
+                // .path("/api/auth/refresh")
+                .maxAge(7 * 24 * 60 * 60)
+                .build();
     }
 }
 
 record AuthRequest(String username, String password) {
 }
 
-record AuthResponse(String token, String refreshToken, String error) {
+record AuthResponse(String token, String error) {
 }
 
 record ErrorResponse(String error) {
