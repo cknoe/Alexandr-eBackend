@@ -21,6 +21,7 @@ import com.cknoe.backend_springboot.security.jwt.JwtUtil;
 import com.cknoe.backend_springboot.service.AppUserDetailsService;
 
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.validation.Valid;
 
 @RestController
 public class AuthController {
@@ -58,11 +59,16 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@RequestBody RegisterRequestDTO request,
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequestDTO request,
             HttpServletResponse response) {
 
         if (appUserRepository.findByUsername(request.username()).isPresent()) {
             return ResponseEntity.badRequest().body(new AuthResponse(null, "Username already exists"));
+        }
+
+        if (request.password().equals("")) {
+            return ResponseEntity.badRequest()
+                    .body(new AuthResponse(null, "Password must containmore than one letter"));
         }
 
         AppUser user = new AppUser();

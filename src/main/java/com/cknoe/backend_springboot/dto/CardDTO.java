@@ -4,10 +4,12 @@ import org.hibernate.validator.constraints.URL;
 
 import com.cknoe.backend_springboot.entity.Card;
 
+import jakarta.validation.constraints.NotBlank;
+
 public record CardDTO(
         Long id,
-        String title,
-        String description,
+        @NotBlank String title,
+        @NotBlank String description,
         @URL(message = "Content must be a valid URL") String content,
         String ownerUsername) {
 
