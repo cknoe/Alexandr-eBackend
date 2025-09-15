@@ -16,3 +16,5 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  config:
+    import: optional:application-secrets.yml
