@@ -40,7 +40,7 @@ public class ThirdPartyApi {
     private Mono<ResponseEntity<byte[]>> handleResponse(ClientResponse response) {
         HttpStatusCode status = response.statusCode();
 
-        if (status.is2xxSuccessful()) {
+        if (status.value() == 200) {
             return response.bodyToMono(byte[].class)
                     .map(body -> {
                         if (body == null || body.length == 0) {
@@ -50,12 +50,15 @@ public class ThirdPartyApi {
                                 .contentType(response.headers().contentType().orElse(MediaType.IMAGE_JPEG))
                                 .body(body);
                     });
+        } else if (status.value() == 202) {
+            return Mono.just(ResponseEntity.status(HttpStatus.ACCEPTED)
+                    .body(("Auto-generated logo").getBytes()));
         } else if (status.is4xxClientError()) {
             return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(("Erreur client LogoDev: " + status.value()).getBytes()));
+                    .body(("Logodev error: " + status.value()).getBytes()));
         } else {
             return Mono.just(ResponseEntity.status(HttpStatus.BAD_GATEWAY)
-                    .body(("Erreur serveur LogoDev: " + status.value()).getBytes()));
+                    .body(("Logodev server error: " + status.value()).getBytes()));
         }
     }
 }
