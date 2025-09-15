@@ -83,6 +83,11 @@ public class AppUserController {
         appUserRepository.deleteById(user.getId());
     }
 
+    /*
+     * TO-DO :
+     * Create admin controller(s?)
+     */
+
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("admin/users")
     public List<AppUser> getAllUsers() {

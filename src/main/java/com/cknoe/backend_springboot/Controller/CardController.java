@@ -3,6 +3,7 @@ package com.cknoe.backend_springboot.controller;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -88,16 +89,24 @@ public class CardController {
         cardRepository.deleteById(id);
     }
 
+    /*
+     * TO-DO :
+     * Create admin controller(s?)
+     */
+
+    @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin/cards")
     List<CardDTO> all() {
         return cardRepository.findAll().stream().map(CardDTO::fromEntity).toList();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin/cards")
     Card newCard(@RequestBody Card newCard) {
         return cardRepository.save(newCard);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/cards/{id}")
     CardDTO replaceCard(@RequestBody Card newCard, @PathVariable Long id) {
         Card updatedCard = cardRepository.findById(id)
