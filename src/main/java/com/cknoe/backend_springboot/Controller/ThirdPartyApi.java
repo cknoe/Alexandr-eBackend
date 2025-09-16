@@ -23,7 +23,6 @@ public class ThirdPartyApi {
                 .baseUrl("https://img.logo.dev")
                 .defaultUriVariables(Map.of("token", logoDevKey))
                 .filter((request, next) -> {
-                    System.out.println("Full URI: " + request.url());
                     return next.exchange(request);
                 })
                 .build();
@@ -32,7 +31,7 @@ public class ThirdPartyApi {
     @GetMapping("/logodev")
     public ResponseEntity<byte[]> getLogo(@RequestParam String domain) {
         return webClient.get()
-                .uri("/{domain}?token={token}", Map.of("domain", domain))
+                .uri("/{domain}?token={token}&fallback=404", Map.of("domain", domain))
                 .exchangeToMono(response -> handleResponse(response))
                 .block();
     }
@@ -40,7 +39,7 @@ public class ThirdPartyApi {
     private Mono<ResponseEntity<byte[]>> handleResponse(ClientResponse response) {
         HttpStatusCode status = response.statusCode();
 
-        if (status.value() == 200) {
+        if (status.is2xxSuccessful()) {
             return response.bodyToMono(byte[].class)
                     .map(body -> {
                         if (body == null || body.length == 0) {
@@ -50,9 +49,6 @@ public class ThirdPartyApi {
                                 .contentType(response.headers().contentType().orElse(MediaType.IMAGE_JPEG))
                                 .body(body);
                     });
-        } else if (status.value() == 202) {
-            return Mono.just(ResponseEntity.status(HttpStatus.ACCEPTED)
-                    .body(("Auto-generated logo").getBytes()));
         } else if (status.is4xxClientError()) {
             return Mono.just(ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(("Logodev error: " + status.value()).getBytes()));
