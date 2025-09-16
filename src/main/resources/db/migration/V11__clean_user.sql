@@ -1,0 +1,1 @@
+TRUNCATE Table app_user CASCADE;
