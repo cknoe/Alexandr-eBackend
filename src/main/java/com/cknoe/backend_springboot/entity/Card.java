@@ -33,39 +33,16 @@ public class Card {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser owner;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "collection_id", nullable = false)
+    private CardCollection collection;
+
     @Column(name = "creation_date", nullable = false, updatable = false)
     private LocalDateTime creationDate;
 
     @PrePersist
     protected void onCreate() {
         this.creationDate = LocalDateTime.now();
-    }
-
-    public Card() {
-    }
-
-    public Card(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
-
-    public Card(String title, String description, String content) {
-        this.title = title;
-        this.description = description;
-        this.content = content;
-    }
-
-    public Card(String title, String description, AppUser owner) {
-        this.title = title;
-        this.description = description;
-        this.owner = owner;
-    }
-
-    public Card(String title, String description, String content, AppUser owner) {
-        this.title = title;
-        this.description = description;
-        this.content = content;
-        this.owner = owner;
     }
 
     public Long getId() {
@@ -92,6 +69,10 @@ public class Card {
         return owner;
     }
 
+    public CardCollection getCollection() {
+        return collection;
+    }
+
     public LocalDateTime getCreationDate() {
         return creationDate;
     }
@@ -110,6 +91,10 @@ public class Card {
 
     public void setOwner(AppUser owner) {
         this.owner = owner;
+    }
+
+    public void setCollection(CardCollection collection) {
+        this.collection = collection;
     }
 
     @Override

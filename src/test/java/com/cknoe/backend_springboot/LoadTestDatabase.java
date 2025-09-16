@@ -19,8 +19,8 @@ public class LoadTestDatabase {
     @Bean
     CommandLineRunner initDatabase(CardRepository repository) {
         return args -> {
-            log.info("Preloading " + repository.save(new Card("H2 card", "test profile", "Content 1")));
-            log.info("Preloading " + repository.save(new Card("Title 2", "Description 2", "Content 2")));
+            log.info("Preloading " + repository.save(new Card()));
+            log.info("Preloading " + repository.save(new Card()));
         };
     }
 }
