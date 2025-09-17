@@ -47,6 +47,18 @@ public class GlobalAdvice {
         return ErrorResponse.of("Access Forbidden", request.getRequestURI());
     }
 
+    @ExceptionHandler(InvalidRefreshTokenException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
+    public ErrorResponse handleInvalidRefreshToken(InvalidRefreshTokenException ex, HttpServletRequest request) {
+        return ErrorResponse.of(ex.getMessage(), request.getRequestURI());
+    }
+
+    @ExceptionHandler(UsernameAlreadyExistsException.class)
+    @ResponseStatus(HttpStatus.FORBIDDEN)
+    public ErrorResponse handleUsernameAlreadyExists(UsernameAlreadyExistsException ex, HttpServletRequest request) {
+        return ErrorResponse.of(ex.getMessage(), request.getRequestURI());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ValidationErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex,

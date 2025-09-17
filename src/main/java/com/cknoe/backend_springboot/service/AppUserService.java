@@ -33,7 +33,7 @@ public class AppUserService {
         return appUserRepository.findByUsername(username)
                 .map(user -> {
                     user.setUsername(dto.username());
-                    if (!dto.password().isEmpty()) {
+                    if (dto.password() != null && !dto.password().isEmpty()) {
                         user.setPassword(passwordEncoder.encode(dto.password()));
                     }
                     return appUserRepository.save(user);

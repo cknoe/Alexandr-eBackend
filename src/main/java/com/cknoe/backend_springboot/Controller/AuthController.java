@@ -1,24 +1,16 @@
 package com.cknoe.backend_springboot.controller;
 
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cknoe.backend_springboot.dto.UserInputDTO;
-import com.cknoe.backend_springboot.entity.AppUser;
-import com.cknoe.backend_springboot.repository.AppUserRepository;
-import com.cknoe.backend_springboot.security.config.SecurityConfig;
-import com.cknoe.backend_springboot.security.jwt.JwtUtil;
-import com.cknoe.backend_springboot.service.AppUserDetailsService;
+import com.cknoe.backend_springboot.dto.UserRegisterDTO;
+import com.cknoe.backend_springboot.response.AuthResponse;
+import com.cknoe.backend_springboot.service.AuthService;
 
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -26,84 +18,36 @@ import jakarta.validation.Valid;
 @RestController
 public class AuthController {
 
-    private final AuthenticationManager authenticationManager;
-    private final AppUserDetailsService userDetailsService;
-    private final JwtUtil jwtUtil;
-    private final AppUserRepository appUserRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
-    public AuthController(AuthenticationManager authenticationManager,
-            AppUserDetailsService userDetailsService,
-            JwtUtil jwtUtil,
-            AppUserRepository appUserRepository,
-            SecurityConfig securityConfig) {
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
-        this.jwtUtil = jwtUtil;
-        this.appUserRepository = appUserRepository;
-        this.passwordEncoder = securityConfig.passwordEncoder();
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody AuthRequest request, HttpServletResponse response) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.username(), request.password()));
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
-
-        String jwt = jwtUtil.generateToken(userDetails);
-        String jwtRefresh = jwtUtil.generateRefreshToken(userDetails);
-
-        response.addHeader(HttpHeaders.SET_COOKIE, getResponseCookie(jwtRefresh).toString());
-        return ResponseEntity.ok(new AuthResponse(jwt, null));
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody UserRegisterDTO request,
+            HttpServletResponse response) {
+        AuthResponse tokens = authService.login(request.username(), request.password());
+        response.addHeader(HttpHeaders.SET_COOKIE, getResponseCookie(tokens.refreshToken()).toString());
+        return ResponseEntity.ok(new AuthResponse(tokens.token(), null));
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody UserInputDTO userInputDTO,
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody UserRegisterDTO input,
             HttpServletResponse response) {
-
-        if (appUserRepository.findByUsername(userInputDTO.username()).isPresent()) {
-            return ResponseEntity.badRequest().body(new AuthResponse(null, "Username already exists"));
-        }
-
-        if (userInputDTO.password().equals("")) {
-            return ResponseEntity.badRequest()
-                    .body(new AuthResponse(null, "Password must containmore than one letter"));
-        }
-
-        AppUser user = new AppUser();
-        user.setUsername(userInputDTO.username());
-        user.setPassword(passwordEncoder.encode(userInputDTO.password()));
-        user.setRole("USER");
-
-        appUserRepository.save(user);
-
-        UserDetails userDetails = userDetailsService.loadUserByUsername(userInputDTO.username());
-
-        String jwt = jwtUtil.generateToken(userDetails);
-        String jwtRefresh = jwtUtil.generateRefreshToken(userDetails);
-
-        response.addHeader(HttpHeaders.SET_COOKIE, getResponseCookie(jwtRefresh).toString());
-        return ResponseEntity.ok(new AuthResponse(jwt, null));
+        AuthResponse tokens = authService.register(input);
+        response.addHeader(HttpHeaders.SET_COOKIE, getResponseCookie(tokens.refreshToken()).toString());
+        return ResponseEntity.ok(new AuthResponse(tokens.token(), null));
     }
 
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthResponse> refreshToken(@CookieValue("refreshToken") String refreshToken,
             HttpServletResponse response) {
-        if (!jwtUtil.validateRefreshToken(refreshToken)) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(new AuthResponse(null, "Invalid refresh token"));
-        }
-
-        UserDetails userDetails = userDetailsService
-                .loadUserByUsername(jwtUtil.extractUsernameFromRefresh(refreshToken));
-
-        String newToken = jwtUtil.generateToken(userDetails);
-
-        return ResponseEntity.ok(new AuthResponse(newToken, null));
+        AuthResponse tokens = authService.refreshToken(refreshToken);
+        return ResponseEntity.ok(new AuthResponse(tokens.token(), null));
     }
 
-    ResponseCookie getResponseCookie(String token) {
+    private ResponseCookie getResponseCookie(String token) {
         return ResponseCookie.from("refreshToken", token)
                 .httpOnly(true)
                 .secure(false)
@@ -112,13 +56,4 @@ public class AuthController {
                 .maxAge(7 * 24 * 60 * 60)
                 .build();
     }
-}
-
-record AuthRequest(String username, String password) {
-}
-
-record AuthResponse(String token, String error) {
-}
-
-record ErrorResponse(String error) {
 }
