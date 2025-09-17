@@ -59,7 +59,6 @@ public class AuthService {
     }
 
     public AuthResponse refreshToken(String refreshToken) {
-        System.out.println("refreshToken = " + refreshToken);
         if (!jwtUtil.validateRefreshToken(refreshToken)) {
             throw new InvalidRefreshTokenException();
         }
