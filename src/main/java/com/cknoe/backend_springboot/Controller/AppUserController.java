@@ -1,118 +1,68 @@
 package com.cknoe.backend_springboot.controller;
 
-import java.util.List;
-
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
 
-import com.cknoe.backend_springboot.dto.RegisterRequestDTO;
+import com.cknoe.backend_springboot.dto.UserInputDTO;
 import com.cknoe.backend_springboot.dto.UserChangeDTO;
 import com.cknoe.backend_springboot.dto.UserDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
-import com.cknoe.backend_springboot.exception.UserNotFoundException;
-import com.cknoe.backend_springboot.repository.AppUserRepository;
-import com.cknoe.backend_springboot.security.config.SecurityConfig;
 import com.cknoe.backend_springboot.security.jwt.JwtUtil;
 import com.cknoe.backend_springboot.service.AppUserDetailsService;
+import com.cknoe.backend_springboot.service.AppUserService;
 
 import jakarta.validation.Valid;
 
 @RestController
+@RequestMapping("/users")
 public class AppUserController {
 
-    private final AppUserRepository appUserRepository;
+    private final AppUserService appUserService;
     private final AppUserDetailsService userDetailsService;
     private final JwtUtil jwtUtil;
-    private final PasswordEncoder passwordEncoder;
 
-    public AppUserController(AppUserRepository appUserRepository, JwtUtil jwtUtil,
-            AppUserDetailsService userDetailsService, SecurityConfig securityConfig) {
-        this.appUserRepository = appUserRepository;
+    public AppUserController(AppUserService appUserService,
+            AppUserDetailsService userDetailsService,
+            JwtUtil jwtUtil) {
+        this.appUserService = appUserService;
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
-        this.passwordEncoder = securityConfig.passwordEncoder();
     }
 
-    @GetMapping("/users")
-    UserDTO getMe(@AuthenticationPrincipal UserDetails userDetails) {
-        AppUser user = appUserRepository.findByUsername(userDetails.getUsername())
-                .orElseThrow(() -> new UserNotFoundException(userDetails.getUsername()));
-        return UserDTO.fromEntity(user);
+    @GetMapping
+    public UserDTO getMe(@AuthenticationPrincipal UserDetails userDetails) {
+        return UserDTO.fromEntity(appUserService.getCurrentUser(userDetails.getUsername()));
     }
 
-    @GetMapping("/users/{id}")
-    UserDTO getUserById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        AppUser user = appUserRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        return UserDTO.fromEntity(user);
+    @GetMapping("/{id}")
+    public UserDTO getUserById(@PathVariable Long id) {
+        return UserDTO.fromEntity(appUserService.getUserById(id));
     }
 
-    @PutMapping("/users")
-    UserChangeDTO replaceUser(@Valid @RequestBody RegisterRequestDTO registerRequestDTO,
+    @PutMapping
+    public UserChangeDTO replaceUser(@Valid @RequestBody UserInputDTO userInputDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
 
-        AppUser newUser = RegisterRequestDTO.toEntity(registerRequestDTO);
-        AppUser updatedUser = appUserRepository.findByUsername(userDetails.getUsername())
-                .map(user -> {
-                    user.setUsername(newUser.getUsername());
-                    if (!newUser.getPassword().equals("")) {
-                        user.setPassword(passwordEncoder.encode(newUser.getPassword()));
-                    }
+        AppUser updatedUser = appUserService.updateCurrentUser(userDetails.getUsername(), userInputDTO);
 
-                    return appUserRepository.save(user);
-                })
-                .orElseThrow(() -> new UserNotFoundException(userDetails.getUsername()));
-        ;
-        String newJwt = jwtUtil.generateToken(userDetailsService.loadUserByUsername(updatedUser.getUsername()));
-        UserDTO userDTO = UserDTO.fromEntity(updatedUser);
-        return new UserChangeDTO(userDTO, newJwt);
+        String newJwt = jwtUtil.generateToken(
+                userDetailsService.loadUserByUsername(updatedUser.getUsername()));
+
+        return new UserChangeDTO(UserDTO.fromEntity(updatedUser), newJwt);
     }
 
-    @DeleteMapping("/users")
-    void deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
-        String username = userDetails.getUsername();
-        AppUser user = appUserRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
-        appUserRepository.deleteById(user.getId());
-    }
-
-    /*
-     * TO-DO :
-     * Create admin controller(s?)
-     */
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping("admin/users")
-    public List<AppUser> getAllUsers() {
-        return appUserRepository.findAll();
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @DeleteMapping("admin/users/{id}")
-    void deleteUserById(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
-        appUserRepository.deleteById(id);
-    }
-
-    @PreAuthorize("hasRole('ADMIN')")
-    @PutMapping("admin/users/{id}")
-    UserDTO replaceUserById(@RequestBody UserDTO newUserDTO, @PathVariable Long id,
-            @AuthenticationPrincipal UserDetails userDetails) {
-        AppUser newUser = UserDTO.toEntity(newUserDTO);
-        AppUser updatedUser = appUserRepository.findById(id)
-                .map(user -> {
-                    user.setUsername(newUser.getUsername());
-                    user.setRole(newUser.getRole());
-                    return appUserRepository.save(user);
-                })
-                .orElseThrow(() -> new UserNotFoundException(id));
-        ;
-        return UserDTO.fromEntity(updatedUser);
+    @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteUser(@AuthenticationPrincipal UserDetails userDetails) {
+        appUserService.deleteCurrentUser(userDetails.getUsername());
     }
 }

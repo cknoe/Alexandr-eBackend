@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cknoe.backend_springboot.repository.CardRepository;
-import com.cknoe.backend_springboot.repository.AppUserRepository;
 import com.cknoe.backend_springboot.repository.CardCollectionRepository;
 import com.cknoe.backend_springboot.dto.CardDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
@@ -15,21 +14,20 @@ import com.cknoe.backend_springboot.entity.CardCollection;
 import com.cknoe.backend_springboot.exception.CardNotFoundException;
 import com.cknoe.backend_springboot.exception.CollectionNotFoundException;
 import com.cknoe.backend_springboot.exception.ForbiddenException;
-import com.cknoe.backend_springboot.exception.UserNotFoundException;
 
 @Service
 public class CardService {
 
     private final CardRepository cardRepository;
-    private final AppUserRepository appUserRepository;
+    private final AppUserService appUserService;
     private final CardCollectionRepository cardCollectionRepository;
 
     public CardService(CardRepository cardRepository,
-            AppUserRepository appUserRepository,
-            CardCollectionRepository cardCollectionRepository) {
+            CardCollectionRepository cardCollectionRepository,
+            AppUserService appUserService) {
         this.cardRepository = cardRepository;
-        this.appUserRepository = appUserRepository;
         this.cardCollectionRepository = cardCollectionRepository;
+        this.appUserService = appUserService;
     }
 
     public List<CardDTO> getCardsForUser(String username) {
@@ -41,8 +39,7 @@ public class CardService {
 
     @Transactional
     public CardDTO createCard(CardDTO dto, String username) {
-        AppUser user = appUserRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+        AppUser user = appUserService.getCurrentUser(username);
 
         CardCollection collection = cardCollectionRepository.findById(dto.collectionId())
                 .orElseThrow(() -> new CollectionNotFoundException(dto.collectionId()));
@@ -69,8 +66,7 @@ public class CardService {
     @Transactional
     public CardDTO updateCard(Long id, CardDTO dto, String username) {
 
-        AppUser user = appUserRepository.findByUsername(username)
-                .orElseThrow(() -> new UserNotFoundException(username));
+        AppUser user = appUserService.getCurrentUser(username);
 
         Card newCardData = CardDTO.toEntity(dto);
 

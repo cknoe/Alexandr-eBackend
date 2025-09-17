@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cknoe.backend_springboot.dto.RegisterRequestDTO;
+import com.cknoe.backend_springboot.dto.UserInputDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.repository.AppUserRepository;
 import com.cknoe.backend_springboot.security.config.SecurityConfig;
@@ -59,26 +59,26 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<AuthResponse> register(@Valid @RequestBody RegisterRequestDTO request,
+    public ResponseEntity<AuthResponse> register(@Valid @RequestBody UserInputDTO userInputDTO,
             HttpServletResponse response) {
 
-        if (appUserRepository.findByUsername(request.username()).isPresent()) {
+        if (appUserRepository.findByUsername(userInputDTO.username()).isPresent()) {
             return ResponseEntity.badRequest().body(new AuthResponse(null, "Username already exists"));
         }
 
-        if (request.password().equals("")) {
+        if (userInputDTO.password().equals("")) {
             return ResponseEntity.badRequest()
                     .body(new AuthResponse(null, "Password must containmore than one letter"));
         }
 
         AppUser user = new AppUser();
-        user.setUsername(request.username());
-        user.setPassword(passwordEncoder.encode(request.password()));
+        user.setUsername(userInputDTO.username());
+        user.setPassword(passwordEncoder.encode(userInputDTO.password()));
         user.setRole("USER");
 
         appUserRepository.save(user);
 
-        UserDetails userDetails = userDetailsService.loadUserByUsername(request.username());
+        UserDetails userDetails = userDetailsService.loadUserByUsername(userInputDTO.username());
 
         String jwt = jwtUtil.generateToken(userDetails);
         String jwtRefresh = jwtUtil.generateRefreshToken(userDetails);
