@@ -3,7 +3,7 @@ package com.cknoe.backend_springboot.service;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.cknoe.backend_springboot.dto.UserInputDTO;
+import com.cknoe.backend_springboot.dto.userDTOs.UserInputDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.exception.UserNotFoundException;
 import com.cknoe.backend_springboot.repository.AppUserRepository;

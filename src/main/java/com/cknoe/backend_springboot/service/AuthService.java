@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import com.cknoe.backend_springboot.dto.UserRegisterDTO;
+import com.cknoe.backend_springboot.dto.userDTOs.UserRegisterDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.exception.InvalidRefreshTokenException;
 import com.cknoe.backend_springboot.exception.UsernameAlreadyExistsException;

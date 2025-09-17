@@ -1,4 +1,4 @@
-package com.cknoe.backend_springboot.dto;
+package com.cknoe.backend_springboot.dto.userDTOs;
 
 import com.cknoe.backend_springboot.entity.AppUser;
 

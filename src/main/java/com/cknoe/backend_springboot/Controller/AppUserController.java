@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.HttpStatus;
 
-import com.cknoe.backend_springboot.dto.UserInputDTO;
-import com.cknoe.backend_springboot.dto.UserChangeDTO;
-import com.cknoe.backend_springboot.dto.UserDTO;
+import com.cknoe.backend_springboot.dto.userDTOs.UserChangeDTO;
+import com.cknoe.backend_springboot.dto.userDTOs.UserDTO;
+import com.cknoe.backend_springboot.dto.userDTOs.UserInputDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.security.jwt.JwtUtil;
 import com.cknoe.backend_springboot.service.AppUserDetailsService;

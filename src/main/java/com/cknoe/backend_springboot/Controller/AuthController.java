@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.cknoe.backend_springboot.dto.UserRegisterDTO;
+import com.cknoe.backend_springboot.dto.userDTOs.UserRegisterDTO;
 import com.cknoe.backend_springboot.response.AuthResponse;
 import com.cknoe.backend_springboot.service.AuthService;
 
