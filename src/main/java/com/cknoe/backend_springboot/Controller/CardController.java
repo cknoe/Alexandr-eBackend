@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import jakarta.validation.Valid;
@@ -33,50 +34,51 @@ public class CardController {
     }
 
     @GetMapping
-    List<CardDTO> getMyCards(@AuthenticationPrincipal UserDetails userDetails) {
+    public List<CardDTO> getMyCards(@AuthenticationPrincipal UserDetails userDetails) {
         return cardService.getCardsForUser(userDetails.getUsername());
     }
 
     @PostMapping
-    ResponseEntity<CardDTO> createCard(@Valid @RequestBody CardDTO cardDTO,
+    public ResponseEntity<CardDTO> createCard(@Valid @RequestBody CardDTO cardDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
         CardDTO created = cardService.createCard(cardDTO, userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping("/{id}")
-    CardDTO getMyCard(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public CardDTO getMyCard(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         return cardService.getCard(id, userDetails.getUsername());
     }
 
     @PutMapping("/{id}")
-    CardDTO updateMyCard(@PathVariable Long id,
+    public CardDTO updateMyCard(@PathVariable Long id,
             @Valid @RequestBody CardDTO dto,
             @AuthenticationPrincipal UserDetails userDetails) {
         return cardService.updateCard(id, dto, userDetails.getUsername());
     }
 
     @DeleteMapping("/{id}")
-    void deleteMyCard(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void deleteMyCard(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         cardService.deleteCard(id, userDetails.getUsername());
     }
 
     // ADMIN
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/admin")
-    List<CardDTO> allCards() {
+    public List<CardDTO> allCards() {
         return cardService.getAllCards();
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/admin")
-    Card newCard(@RequestBody Card newCard) {
+    public Card newCard(@RequestBody Card newCard) {
         return cardService.createCardAdmin(newCard);
     }
 
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/admin/{id}")
-    CardDTO replaceCard(@PathVariable Long id, @RequestBody Card newCard) {
+    public CardDTO replaceCard(@PathVariable Long id, @RequestBody Card newCard) {
         return cardService.replaceCardAdmin(id, newCard);
     }
 }
