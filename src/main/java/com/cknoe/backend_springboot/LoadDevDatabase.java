@@ -62,7 +62,7 @@ public class LoadDevDatabase {
             cardCollectionList.add(cardCollection1);
 
             CardCollection cardCollection2 = new CardCollection();
-            cardCollection2.setName("Collection 1");
+            cardCollection2.setName("Collection 2");
             cardCollection2.setOwner(userAdmin);
             cardCollectionList.add(cardCollection2);
 
