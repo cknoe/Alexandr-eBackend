@@ -42,6 +42,7 @@ public class CardCollectionController {
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public CardCollectionDTO createCardCollection(@Valid @RequestBody CardCollectionDTO cardCollectionDTO,
             @AuthenticationPrincipal UserDetails userDetails) {
         return cardCollectionService.createCardCollection(cardCollectionDTO, userDetails.getUsername());
@@ -56,7 +57,7 @@ public class CardCollectionController {
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteMyCard(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
+    public void deleteCollection(@PathVariable Long id, @AuthenticationPrincipal UserDetails userDetails) {
         cardCollectionService.deleteCardCollection(id, userDetails.getUsername());
     }
 }

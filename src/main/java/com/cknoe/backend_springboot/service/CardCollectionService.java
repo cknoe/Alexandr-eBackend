@@ -52,13 +52,6 @@ public class CardCollectionService {
         CardCollection cardCollection = new CardCollection();
         cardCollection.setName(dto.name());
         cardCollection.setOwner(user);
-        List<Card> cardList = new ArrayList<Card>();
-        if (dto.cards() != null) {
-            dto.cards().forEach(card -> {
-                cardList.add(CardDTO.toEntity(card));
-            });
-        }
-        cardCollection.setCards(cardList);
         return CardCollectionDTO.fromEntity(cardCollectionRepository.save(cardCollection));
     }
 
