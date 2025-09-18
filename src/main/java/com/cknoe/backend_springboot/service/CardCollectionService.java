@@ -11,7 +11,7 @@ import com.cknoe.backend_springboot.dto.CardDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
 import com.cknoe.backend_springboot.entity.Card;
 import com.cknoe.backend_springboot.entity.CardCollection;
-import com.cknoe.backend_springboot.exception.CardNotFoundException;
+import com.cknoe.backend_springboot.exception.CollectionNotFoundException;
 import com.cknoe.backend_springboot.exception.ForbiddenException;
 import com.cknoe.backend_springboot.repository.CardCollectionRepository;
 
@@ -28,7 +28,7 @@ public class CardCollectionService {
 
     public CardCollectionDTO getCollectionById(Long id, String username) {
         CardCollection cardCollection = cardCollectionRepository.findById(id)
-                .orElseThrow(() -> new CardNotFoundException(id));
+                .orElseThrow(() -> new CollectionNotFoundException(id));
 
         if (!cardCollection.getOwner().getUsername().equals(username)) {
             throw new ForbiddenException();
@@ -68,7 +68,7 @@ public class CardCollectionService {
         CardCollection newCardCollection = CardCollectionDTO.toEntity(dto);
 
         CardCollection cardCollection = cardCollectionRepository.findById(id)
-                .orElseThrow(() -> new CardNotFoundException(id));
+                .orElseThrow(() -> new CollectionNotFoundException(id));
 
         if (!cardCollection.getOwner().getUsername().equals(username)) {
             throw new ForbiddenException();
@@ -81,7 +81,7 @@ public class CardCollectionService {
 
     public void deleteCardCollection(Long id, String username) {
         CardCollection cardCollection = cardCollectionRepository.findById(id)
-                .orElseThrow(() -> new CardNotFoundException(id));
+                .orElseThrow(() -> new CollectionNotFoundException(id));
 
         if (!cardCollection.getOwner().getUsername().equals(username)) {
             throw new ForbiddenException();
