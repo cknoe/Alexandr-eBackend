@@ -35,7 +35,8 @@ public class CardCollectionService {
     }
 
     public List<CardCollectionDTO> getCollectionForUsername(String username) {
-        List<CardCollection> cardCollectionList = cardCollectionRepository.findByOwnerUsername(username);
+        List<CardCollection> cardCollectionList = cardCollectionRepository
+                .findByOwnerUsernameOrderByCreationDateAsc(username);
         List<CardCollectionDTO> response = new ArrayList<CardCollectionDTO>();
         cardCollectionList.forEach(cardCollection -> {
             response.add(CardCollectionDTO.fromEntity(cardCollection));
