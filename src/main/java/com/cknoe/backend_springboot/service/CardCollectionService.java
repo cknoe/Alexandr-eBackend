@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.cknoe.backend_springboot.dto.CardCollectionDTO;
-import com.cknoe.backend_springboot.dto.CardDTO;
 import com.cknoe.backend_springboot.entity.AppUser;
-import com.cknoe.backend_springboot.entity.Card;
 import com.cknoe.backend_springboot.entity.CardCollection;
 import com.cknoe.backend_springboot.exception.CollectionNotFoundException;
 import com.cknoe.backend_springboot.exception.ForbiddenException;
