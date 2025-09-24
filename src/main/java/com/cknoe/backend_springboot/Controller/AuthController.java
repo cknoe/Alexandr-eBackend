@@ -1,11 +1,13 @@
 package com.cknoe.backend_springboot.controller;
 
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.cknoe.backend_springboot.dto.userDTOs.UserRegisterDTO;
@@ -45,6 +47,12 @@ public class AuthController {
             HttpServletResponse response) {
         AuthResponse tokens = authService.refreshToken(refreshToken);
         return ResponseEntity.ok(new AuthResponse(tokens.token(), null));
+    }
+
+    @PostMapping("/logout")
+    @ResponseStatus(HttpStatus.OK)
+    public void logout(HttpServletResponse response) {
+        response.addHeader(HttpHeaders.SET_COOKIE, getResponseCookie("").toString());
     }
 
     private ResponseCookie getResponseCookie(String token) {
