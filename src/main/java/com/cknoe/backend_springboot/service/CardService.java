@@ -1,5 +1,6 @@
 package com.cknoe.backend_springboot.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -51,6 +52,19 @@ public class CardService {
         card.setOwner(user);
         card.setCollection(collection);
         return CardDTO.fromEntity(cardRepository.save(card));
+    }
+
+    @Transactional
+    public List<CardDTO> createCardList(
+            List<CardDTO> cardDTOList,
+            String username) {
+        List<CardDTO> createdList = new ArrayList<>();
+
+        for (CardDTO cardDTO : cardDTOList) {
+            createdList.add(createCard(cardDTO, username));
+        }
+
+        return createdList;
     }
 
     public CardDTO getCard(Long id, String username) {
