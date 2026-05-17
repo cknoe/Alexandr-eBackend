@@ -1,5 +1,6 @@
 package com.cknoe.backend_springboot.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -43,6 +44,16 @@ public class CardController {
             @AuthenticationPrincipal UserDetails userDetails) {
         CardDTO created = cardService.createCard(cardDTO, userDetails.getUsername());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
+    }
+
+    @PostMapping("/batch")
+    public ResponseEntity<ArrayList<CardDTO>> createCardList(@Valid @RequestBody ArrayList<CardDTO> cardDTOList,
+            @AuthenticationPrincipal UserDetails userDetails) {
+        ArrayList<CardDTO> createdList = new ArrayList<CardDTO>();
+        for (CardDTO cardDTO : cardDTOList) {
+            createdList.add(cardService.createCard(cardDTO, userDetails.getUsername()));
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(createdList);
     }
 
     @GetMapping("/{id}")
