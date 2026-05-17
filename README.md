@@ -1,5 +1,5 @@
 # run
-docker-compose up -d
+docker-compose up -d  
 ./mvnw spring-boot:run
 
 # test
@@ -30,6 +30,26 @@ curl -v http://localhost:8080/cards -H "Authorization: Bearer TOKEN"| jq
   - Description: Logout / invalidate token (if implemented)  
   - Visibility: public
 
+## Users (authenticated)
+- GET /users  
+  - Description: Return information about the currently authenticated user.  
+  - Visibility: authenticated
+
+- GET /users/{id}  
+  - Description: Return public details for a user by id (requires authentication in this app).  
+  - Visibility: authenticated
+
+- PUT /users  
+  - Description: Update current user's profile and return updated user + new JWT.  
+  - Example body: {"username":"newusername","email":"new@example.com","password":"newpass"}  
+  - Response: 200 OK (returns user DTO and refreshed JWT)  
+  - Visibility: authenticated
+
+- DELETE /users  
+  - Description: Delete the currently authenticated user's account.  
+  - Response: 204 No Content  
+  - Visibility: authenticated
+
 ## Cards (authenticated)
 - GET /cards  
   - Description: List cards  
@@ -54,6 +74,31 @@ curl -v http://localhost:8080/cards -H "Authorization: Bearer TOKEN"| jq
   - Description: Delete a card  
   - Visibility: authenticated  
   - Roles: check CardController for role restrictions
+
+## Collections (authenticated)
+- GET /collections  
+  - Description: Return the list of collections for the authenticated user.  
+  - Visibility: authenticated (JWT required)
+
+- GET /collections/{id}  
+  - Description: Return a single collection by id for the authenticated user.  
+  - Visibility: authenticated
+
+- POST /collections  
+  - Description: Create a new collection for the authenticated user.  
+  - Example body: {"name":"My Collection","description":"Optional description"}  
+  - Response: 201 Created  
+  - Visibility: authenticated
+
+- PUT /collections/{id}  
+  - Description: Update an existing collection (by id) for the authenticated user.  
+  - Example body: {"name":"Updated name","description":"Updated description"}  
+  - Visibility: authenticated
+
+- DELETE /collections/{id}  
+  - Description: Delete a collection (by id) belonging to the authenticated user.  
+  - Response: 204 No Content  
+  - Visibility: authenticated
 
 ## Third-party / utility
 - GET /api/logodev  
