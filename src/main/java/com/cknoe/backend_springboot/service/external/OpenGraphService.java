@@ -3,8 +3,6 @@ package com.cknoe.backend_springboot.service.external;
 import java.net.InetAddress;
 import java.net.URI;
 import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.Set;
 
 import org.jsoup.Jsoup;
