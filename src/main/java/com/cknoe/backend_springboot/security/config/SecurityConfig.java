@@ -42,7 +42,9 @@ public class SecurityConfig {
         http.csrf(csrf -> csrf.disable())
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/register", "/refresh-token", "/logout", "/api/logodev").permitAll()
+                        .requestMatchers("/login", "/register", "/refresh-token", "/logout", "/api/logodev",
+                                "/api/opengraph")
+                        .permitAll()
                         .anyRequest().authenticated())
                 .logout(logout -> logout.disable())
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
