@@ -4,6 +4,11 @@ app:
     jwt-refresh-secret: bXlyZWZyZXNoc2VjcmV0a2V5bXlyZWZyZXNoc2VjcmV0a2V5IQ==
     jwt-refresh-expiration-ms: 604800000 # 7 jours
     frontend-url: http://localhost:5173, http://192.168.1.49:5173/
+    opengraph:
+      allowed-domains:
+        wikipedia.org,
+        github.com,
+        stackoverflow.com
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/mydb

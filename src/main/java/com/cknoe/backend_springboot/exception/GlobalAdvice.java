@@ -59,6 +59,12 @@ public class GlobalAdvice {
         return ErrorResponse.of(ex.getMessage(), request.getRequestURI());
     }
 
+    @ExceptionHandler(InvalidUrlException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleInvalidUrl(InvalidUrlException ex, HttpServletRequest request) {
+        return ErrorResponse.of(ex.getMessage(), request.getRequestURI());
+    }
+
     @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ValidationErrorResponse handleValidationExceptions(MethodArgumentNotValidException ex,

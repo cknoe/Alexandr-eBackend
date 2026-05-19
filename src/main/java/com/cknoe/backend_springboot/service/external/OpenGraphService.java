@@ -1,6 +1,11 @@
 package com.cknoe.backend_springboot.service.external;
 
+import java.net.InetAddress;
+import java.net.URI;
 import java.net.URL;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
+import java.util.Set;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,9 +13,15 @@ import org.jsoup.nodes.Element;
 import org.springframework.stereotype.Service;
 
 import com.cknoe.backend_springboot.dto.OpenGraphResponseDTO;
+import com.cknoe.backend_springboot.exception.InvalidUrlException;
 
 @Service
 public class OpenGraphService {
+    private final Set<String> allowedDomains;
+
+    public OpenGraphService(Set<String> allowedDomains) {
+        this.allowedDomains = allowedDomains;
+    }
 
     public OpenGraphResponseDTO fetch(String url) {
 
@@ -58,16 +69,36 @@ public class OpenGraphService {
     }
 
     private void validateUrl(String url) {
+        try {
+            URI uri = new URI(url);
+            String scheme = uri.getScheme();
+            if (!"http".equals(scheme) && !"https".equals(scheme)) {
+                throw new IllegalArgumentException("Invalid scheme");
+            }
 
-        if (url == null || url.isBlank()) {
-            throw new IllegalArgumentException("URL is required");
-        }
+            String host = uri.getHost();
+            if (host == null || host.isBlank()) {
+                throw new IllegalArgumentException("Invalid host");
+            }
 
-        if (!url.startsWith("http://")
-                && !url.startsWith("https://")) {
+            boolean allowed = allowedDomains.stream().anyMatch(domain -> host.equals(domain) ||
+                    host.endsWith("." + domain));
 
-            throw new IllegalArgumentException(
-                    "Invalid URL scheme");
+            if (!allowed) {
+                throw new IllegalArgumentException("Domain not allowed");
+            }
+
+            InetAddress address = InetAddress.getByName(host);
+
+            if (address.isAnyLocalAddress()
+                    || address.isLoopbackAddress()
+                    || address.isSiteLocalAddress()) {
+
+                throw new IllegalArgumentException("Blocked internal IP");
+            }
+
+        } catch (Exception e) {
+            throw new InvalidUrlException(url, e.getMessage());
         }
     }
 
