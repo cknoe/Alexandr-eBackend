@@ -8,6 +8,7 @@ import java.util.Set;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.cknoe.backend_springboot.dto.OpenGraphResponseDTO;
@@ -21,6 +22,7 @@ public class OpenGraphService {
         this.allowedDomains = allowedDomains;
     }
 
+    @Cacheable("opengraph")
     public OpenGraphResponseDTO fetch(String url) {
 
         validateUrl(url);

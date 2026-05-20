@@ -2,6 +2,7 @@ package com.cknoe.backend_springboot.service.external;
 
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +26,7 @@ public class LogoDevService {
                 .build();
     }
 
+    @Cacheable("logodev")
     public Mono<ResponseEntity<byte[]>> fetchLogo(String domain) {
         return webClient.get()
                 .uri("/{domain}?token={token}&fallback=404",
