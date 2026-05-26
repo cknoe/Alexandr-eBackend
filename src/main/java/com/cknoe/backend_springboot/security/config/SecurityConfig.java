@@ -43,7 +43,7 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/login", "/register", "/refresh-token", "/logout", "/api/logodev",
-                                "/api/opengraph")
+                                "/api/opengraph", "/swagger-ui/**", "/v3/api-docs", "/v3/api-docs/**")
                         .permitAll()
                         .anyRequest().authenticated())
                 .logout(logout -> logout.disable())
