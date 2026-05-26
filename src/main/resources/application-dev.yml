@@ -3,12 +3,41 @@ app:
     jwt-expiration-ms: 36000000 # 10 heures
     jwt-refresh-secret: bXlyZWZyZXNoc2VjcmV0a2V5bXlyZWZyZXNoc2VjcmV0a2V5IQ==
     jwt-refresh-expiration-ms: 604800000 # 7 jours
-    frontend-url: http://localhost:5173, http://192.168.1.49:5173/
+    cors:
+      allowed-origin-patterns:
+        http://localhost:5173,
+        http://192.168.1.*:5173
     opengraph:
       allowed-domains:
-        wikipedia.org,
         github.com,
-        stackoverflow.com
+        gitlab.com,
+        npmjs.com,
+        pypi.org,
+        docker.com,
+        docker.io,
+        medium.com,
+        dev.to,
+        hashnode.com,
+        stackoverflow.com,
+        x.com,
+        twitter.com,
+        linkedin.com,
+        reddit.com,
+        youtube.com,
+        youtu.be,
+        twitch.tv,
+        wikipedia.org,
+        notion.so,
+        readthedocs.io,
+        docs.google.com,
+        nytimes.com,
+        bbc.com,
+        lemonde.fr,
+        theverge.com,
+        techcrunch.com,
+        figma.com,
+        canva.com
+
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/mydb
