@@ -33,11 +33,11 @@ public class JwtUtil {
         System.out.println("JWT EXP MS = [" + jwtExpirationMs + "]");
         System.out.println("JWT SECRET REFRESH = [" + secretRefreshKey + "]");
         System.out.println("JWT SECRET REFRESH EXP MS = [" + jwtRefreshExpirationMs + "]");
-        byte[] decodedKey = Base64.getDecoder().decode(secretKey);
-        byte[] decodedRefreshKey = Base64.getDecoder().decode(secretRefreshKey);
-        this.key = Keys.hmacShaKeyFor(decodedKey);
+        byte[] keyBytes = secretKey.getBytes();
+        byte[] refreshKeyBytes = secretRefreshKey.getBytes();
+        this.key = Keys.hmacShaKeyFor(keyBytes);
         this.jwtExpirationMs = jwtExpirationMs;
-        this.refreshKey = Keys.hmacShaKeyFor(decodedRefreshKey);
+        this.refreshKey = Keys.hmacShaKeyFor(refreshKeyBytes);
         this.jwtRefreshExpirationMs = jwtRefreshExpirationMs;
     }
 
