@@ -1,7 +1,6 @@
 package com.cknoe.backend_springboot.security.jwt;
 
 import java.util.Date;
-import java.util.Base64;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
