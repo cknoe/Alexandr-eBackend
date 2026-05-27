@@ -1,4 +1,6 @@
 version: "3.9"
+
+name: alexandr-e
 services:
   db:
     image: postgres:15
@@ -14,8 +16,6 @@ services:
 
   app:
     build: .
-
-    container_name: alexandr-e-backend
 
     ports:
       - "8080:8080"
