@@ -15,7 +15,7 @@ services:
   app:
     build: .
 
-    container_name: myapp-api
+    container_name: alexandr-e-backend
 
     ports:
       - "8080:8080"
