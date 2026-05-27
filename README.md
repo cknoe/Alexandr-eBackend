@@ -88,6 +88,13 @@ cp .env.example .env
 docker compose up --build -d
 ```
 
+## Lancer BDD et App séparemment
+
+```sh
+docker compose up -d db
+docker compose up --build app
+```
+
 # API documentation
 
 Une fois l'application lancée :
