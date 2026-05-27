@@ -79,7 +79,9 @@ Créer un fichier .env à la racine du projet sur le modèle de `.env.example` :
 cp .env.example .env
 ```
 
-(Optionnel) Remplir `LOGO_DEV_KEY` avec votre clef API
+### (Optionnel) Logo.dev clef API
+
+Remplir `LOGO_DEV_KEY` avec votre clef API
 
 [Logo.dev](https://www.logo.dev)
 
