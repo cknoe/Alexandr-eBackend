@@ -50,16 +50,6 @@ app:
   logo:
     dev-key: ${LOGO_DEV_KEY}
 
-  jpa:
-    hibernate:
-      ddl-auto: ${DDL_AUTO:validate}
-    show-sql: ${SHOW_SQL:true}
-    properties:
-      hibernate:
-        jdbc:
-          lob:
-            non_contextual_creation: true
-
   flyway:
     enabled: true
     locations: classpath:db/migration
