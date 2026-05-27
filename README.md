@@ -80,6 +80,7 @@ cp .env.example .env
 ```
 
 (Optionnel) Remplir `LOGO_DEV_KEY` avec votre clef API
+
 [Logo.dev](https://www.logo.dev)
 
 # Run
