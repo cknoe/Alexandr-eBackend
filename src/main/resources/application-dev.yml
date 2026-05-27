@@ -1,54 +1,10 @@
-app:
-    jwt-secret: bXlzZWNyZXRrZXlteXNlY3JldGtleW15c2VjcmV0a2V5IQ==
-    jwt-expiration-ms: 36000000 # 10 heures
-    jwt-refresh-secret: bXlyZWZyZXNoc2VjcmV0a2V5bXlyZWZyZXNoc2VjcmV0a2V5IQ==
-    jwt-refresh-expiration-ms: 604800000 # 7 jours
-    cors:
-      allowed-origin-patterns:
-        http://localhost:5173,
-        http://192.168.1.*:5173
-    opengraph:
-      allowed-domains:
-        github.com,
-        gitlab.com,
-        npmjs.com,
-        pypi.org,
-        docker.com,
-        docker.io,
-        medium.com,
-        dev.to,
-        hashnode.com,
-        stackoverflow.com,
-        x.com,
-        twitter.com,
-        linkedin.com,
-        reddit.com,
-        youtube.com,
-        youtu.be,
-        twitch.tv,
-        wikipedia.org,
-        notion.so,
-        readthedocs.io,
-        docs.google.com,
-        nytimes.com,
-        bbc.com,
-        lemonde.fr,
-        theverge.com,
-        techcrunch.com,
-        figma.com,
-        canva.com
-
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/mydb
-    username: myuser
-    password: mypassword
+    url: ${DB_URL:jdbc:postgresql://db:5432/mydb}
+    username: ${DB_USERNAME:myuser}
+    password: ${DB_PASSWORD:mypassword}
+
   jpa:
     hibernate:
-      ddl-auto: validate   # Flyway
+      ddl-auto: update
     show-sql: true
-  flyway:
-    enabled: true
-    locations: classpath:db/migration
-  config:
-    import: optional:application-secrets.yml
