@@ -45,7 +45,8 @@ app:
       theverge.com,
       techcrunch.com,
       figma.com,
-      canva.com
+      canva.com,
+      alexandr-e.vercel.app
 
   logo:
     dev-key: ${LOGO_DEV_KEY}
