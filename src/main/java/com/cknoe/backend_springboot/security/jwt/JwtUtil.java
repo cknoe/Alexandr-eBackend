@@ -30,6 +30,9 @@ public class JwtUtil {
             @Value("${app.jwt-refresh-expiration-ms}") int jwtRefreshExpirationMs) {
 
         System.out.println("JWT SECRET = [" + secretKey + "]");
+        System.out.println("JWT EXP MS = [" + jwtExpirationMs + "]");
+        System.out.println("JWT SECRET REFRESH = [" + secretRefreshKey + "]");
+        System.out.println("JWT SECRET REFRESH EXP MS = [" + jwtRefreshExpirationMs + "]");
         byte[] decodedKey = Base64.getDecoder().decode(secretKey);
         byte[] decodedRefreshKey = Base64.getDecoder().decode(secretRefreshKey);
         this.key = Keys.hmacShaKeyFor(decodedKey);
