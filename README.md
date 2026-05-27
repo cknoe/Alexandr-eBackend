@@ -73,7 +73,9 @@ Docker daemon doit être executé pour faire tourner la base de données :
 
 ## Variables d'environnement
 
-Créer un fichier .env à la racine du projet sur le modèle de `.env.example` :
+### Créer .env
+
+Créer un fichier `.env` à la racine du projet sur le modèle de `.env.example` :
 
 ```sh
 cp .env.example .env
