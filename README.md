@@ -65,37 +65,27 @@ Le projet est structuré de la sorte :
 
 ## Pré-requis
 
-- Java 17+
 - Docker + Docker Compose
 
 Docker daemon doit être executé pour faire tourner la base de données :
 - Mac/Windows: Docker Desktop
 - Linux: Docker Engine (`systemctl start docker`)
 
-## Configuration
+## Variables d'environnement
 
-Les secrets sont stockés localement dans un fichier `src/main/resources/application-secrets.yml` (ignoré par git).
+Créer un fichier .env à la racine du projet sur le modèle de `.env.example` :
 
-Ce fichier contient les clés API et paramètres sensibles nécessaires au fonctionnement de l’application.
-
-```yml
-LOGO_DEV_KEY: "<CLE_API_LOGODEV_ICI>"
+```sh
+cp .env.example .env
 ```
 
+(Optionnel) Remplir `LOGO_DEV_KEY` avec votre clef API
 [Logo.dev](https://www.logo.dev)
 
 # Run
 
-## Lancer la base de données
-
 ```sh
-docker-compose up -d
-```
-
-## Lancer l'application
-
-```sh
-./mvnw spring-boot:run
+docker compose up --build -d
 ```
 
 # API documentation
